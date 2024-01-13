@@ -16,6 +16,7 @@ pip install PyMuPDF
 Set Up Your Paths: Modify the pdf_path and output_folder variables in the script to point to your PDF file and the desired output directory for the images, respectively.
 
 pdf_path = r"path_to_your_pdf_file.pdf"
+
 output_folder = r"path_to_your_output_folder"
 
 
