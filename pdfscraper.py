@@ -2,14 +2,16 @@ import fitz  # PyMuPDF
 import os
 
 # Change these paths to match your own setup
-pdf_path = r"C:\Users\mecha\Downloads\GAME1005_W01_Notes.pdf"
+pdf_path = r"C:\Users\mecha\Downloads\CSI_S1_GAME10071.pdf"
 output_folder = r"C:\Users\mecha\Downloads\Images"
+img_subfolder = "img"  # Name of the subfolder for images
 
-# Ensure the output directory exists
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
+# Ensure the output directory and its subfolder exist
+img_output_folder = os.path.join(output_folder, img_subfolder)
+if not os.path.exists(img_output_folder):
+    os.makedirs(img_output_folder)
 
-def convert_pdf_to_images(pdf_path, output_folder):
+def convert_pdf_to_images(pdf_path, img_output_folder):
     # Open the PDF file
     pdf = fitz.open(pdf_path)
     image_paths = []
@@ -26,13 +28,13 @@ def convert_pdf_to_images(pdf_path, output_folder):
 
         # Generate the image file path
         image_filename = f"slide_{page_num + 1}.png"
-        image_path = os.path.join(output_folder, image_filename)
+        image_path = os.path.join(img_output_folder, image_filename)
 
         # Save the pix object as an image file
         pix.save(image_path)
 
         # Add path to list
-        image_paths.append(image_filename)
+        image_paths.append(image_path)
 
         # Print out a status message
         print(f"Converted page {page_num + 1} to image: {image_path}")
@@ -43,7 +45,7 @@ def convert_pdf_to_images(pdf_path, output_folder):
     # Return list of image paths
     return image_paths
 
-def create_markdown_file(image_paths, output_folder):
+def create_markdown_file(image_paths, output_folder, img_subfolder):
     # Name of the markdown file
     md_filename = "slides.md"
     md_filepath = os.path.join(output_folder, md_filename)
@@ -52,12 +54,15 @@ def create_markdown_file(image_paths, output_folder):
     with open(md_filepath, 'w') as md_file:
         md_file.write('# Slides\n\n')
         for image_path in image_paths:
-            md_file.write(f"![[{image_path}]]\n\n")
+            # Extract the image filename from the path
+            image_filename = os.path.basename(image_path)
+            # Write the markdown link using the relative path to the "img" subfolder
+            md_file.write(f"![]({img_subfolder}/{image_filename})\n\n")
 
     print(f"Markdown file created: {md_filepath}")
 
 # Convert PDF pages to images and get paths
-image_paths = convert_pdf_to_images(pdf_path, output_folder)
+image_paths = convert_pdf_to_images(pdf_path, img_output_folder)
 
 # Create markdown file with links to all images
-create_markdown_file(image_paths, output_folder)
+create_markdown_file(image_paths, output_folder, img_subfolder)
